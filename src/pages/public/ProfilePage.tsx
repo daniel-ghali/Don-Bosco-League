@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useProfile } from "@/hooks/useProfile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Mail } from "lucide-react";
 
 const ProfilePage = () => {
   const { session } = useAuth();
-  const [profile, setProfile] = useState<{ display_name: string; email: string } | null>(null);
+  const { displayName } = useProfile();
+  const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
     if (!session?.user?.id) return;
     supabase
       .from("profiles")
-      .select("display_name, email")
+      .select("email")
       .eq("id", session.user.id)
       .maybeSingle()
-      .then(({ data }) => setProfile(data));
+      .then(({ data }) => setEmail(data?.email ?? null));
   }, [session?.user?.id]);
 
   return (
@@ -28,13 +30,13 @@ const ProfilePage = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <p className="text-xs text-[#888] uppercase tracking-wider mb-1">Display Name</p>
-            <p className="text-white text-lg font-semibold">{profile?.display_name ?? "—"}</p>
+            <p className="text-xs text-[#888] uppercase tracking-wider mb-1">Name</p>
+            <p className="text-white text-lg font-semibold">{displayName ?? "—"}</p>
           </div>
           <div>
             <p className="text-xs text-[#888] uppercase tracking-wider mb-1">Email</p>
             <p className="text-[#b0b0b0] flex items-center gap-2">
-              <Mail className="w-4 h-4" /> {profile?.email ?? session?.user?.email ?? "—"}
+              <Mail className="w-4 h-4" /> {email ?? session?.user?.email ?? "—"}
             </p>
           </div>
         </CardContent>

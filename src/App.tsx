@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
+import { LanguageProvider } from "@/hooks/useLanguage";
 
 // Layouts
 import AppLayout from "@/components/AppLayout";
@@ -24,6 +25,9 @@ import PlayersPage from "./pages/Players";
 import GameWeeksPage from "./pages/GameWeeks";
 import MatchesPage from "./pages/Matches";
 import StatsPage from "./pages/Stats";
+import AnnouncementsPage from "./pages/Announcements";
+import ChipsPage from "./pages/Chips";
+import FantasyAdminPage from "./pages/FantasyAdmin";
 
 // Public pages
 import MainPage from "./pages/public/MainPage";
@@ -33,6 +37,8 @@ import MatchDetailPage from "./pages/public/MatchDetailPage";
 import PublicPlayersPage from "./pages/public/PublicPlayersPage";
 import PlayerDetailPage from "./pages/public/PlayerDetailPage";
 import ProfilePage from "./pages/public/ProfilePage";
+import FantasyPage from "./pages/public/FantasyPage";
+import LeaderboardPage from "./pages/public/LeaderboardPage";
 
 const queryClient = new QueryClient();
 
@@ -43,7 +49,7 @@ const RoleRedirect = () => {
   return <Navigate to="/main" replace />;
 };
 
-const AppRoutes = () => {
+const AppRoutes = () => {  
   const { session, loading } = useAuth();
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>;
@@ -59,6 +65,7 @@ const AppRoutes = () => {
         <ProtectedRoute requiredRole="admin">
           <AppLayout>
             <Routes>
+              <Route index element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="dashboard" element={<Index />} />
               <Route path="seasons" element={<SeasonsPage />} />
               <Route path="groups" element={<GroupsPage />} />
@@ -67,6 +74,9 @@ const AppRoutes = () => {
               <Route path="gameweeks" element={<GameWeeksPage />} />
               <Route path="matches" element={<MatchesPage />} />
               <Route path="stats" element={<StatsPage />} />
+              <Route path="announcements" element={<AnnouncementsPage />} />
+              <Route path="chips" element={<ChipsPage />} />
+              <Route path="fantasy" element={<FantasyAdminPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppLayout>
@@ -81,6 +91,8 @@ const AppRoutes = () => {
       <Route path="/players" element={<PublicLayout><PublicPlayersPage /></PublicLayout>} />
       <Route path="/players/:id" element={<PublicLayout><PlayerDetailPage /></PublicLayout>} />
       <Route path="/profile" element={<PublicLayout><ProfilePage /></PublicLayout>} />
+      <Route path="/fantasy" element={<PublicLayout><FantasyPage /></PublicLayout>} />
+      <Route path="/fantasy/leaderboard" element={<PublicLayout><LeaderboardPage /></PublicLayout>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
@@ -88,13 +100,15 @@ const AppRoutes = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </TooltipProvider>
+    <LanguageProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </TooltipProvider>
+    </LanguageProvider>
   </QueryClientProvider>
 );
 

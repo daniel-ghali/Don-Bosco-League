@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Trophy, BarChart3, Swords, Users, Home, LogOut, User, ChevronDown } from "lucide-react";
+import { Trophy, BarChart3, Swords, Users, Home, LogOut, User, ChevronDown, Star } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -11,12 +11,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import FantasyBanner from "@/components/ui/fantasy-banner";
 const navItems = [
   { path: "/main", label: "Home", icon: Home },
   { path: "/standings", label: "Standings", icon: BarChart3 },
   { path: "/matches", label: "Matches", icon: Swords },
   { path: "/players", label: "Players", icon: Users },
+  // { path: "/fantasy", label: "Fantasy", icon: Star },
 ];
 
 const PublicLayout = ({ children }: { children: React.ReactNode }) => {
@@ -27,7 +27,14 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Top announcement banner */}
-   
+      <div className="w-full bg-secondary border-b border-border px-4 py-2 flex items-center justify-between">
+        <p className="text-xs md:text-sm font-medium tracking-wide text-muted-foreground uppercase">
+          School League Fantasy Football — Build your dream team!
+        </p>
+        <Link to="/fantasy" className="text-xs md:text-sm font-black text-success tracking-widest uppercase whitespace-nowrap ml-4 hover:underline">
+          Play Fantasy →
+        </Link>
+      </div>
 
       {/* Main navbar */}
       <nav className="w-full border-b border-border bg-card">
@@ -77,6 +84,11 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
                       <User className="w-4 h-4" /> Profile
                     </Link>
                   </DropdownMenuItem>
+                  {/* <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link to="/fantasy" className="flex items-center gap-2">
+                      <Star className="w-4 h-4" /> My Fantasy Team
+                    </Link>
+                  </DropdownMenuItem> */}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={signOut} className="cursor-pointer">
                     <LogOut className="w-4 h-4 mr-2" /> Logout
@@ -87,7 +99,7 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
           </div>
         </div>
       </nav>
-   <FantasyBanner />
+
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 py-6">
         {children}

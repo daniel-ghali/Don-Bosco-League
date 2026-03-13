@@ -13,7 +13,11 @@ export const useProfile = () => {
       .select("display_name")
       .eq("id", session.user.id)
       .maybeSingle()
-      .then(({ data }) => setDisplayName(data?.display_name ?? null));
+      .then(({ data }) => {
+        const fullName = data?.display_name ?? null;
+        const names = fullName ? fullName.split(' ').slice(0, 2).join(' ') : null;
+        setDisplayName(names);
+      });
   }, [session?.user?.id]);
 
   return { displayName };
