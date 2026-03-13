@@ -25,7 +25,9 @@ export const useProfile = () => {
       .update({ display_name: newName })
       .eq("id", session.user.id);
     if (!error) {
-      await fetchDisplayName(); // Refresh the display name
+      // Directly update the state with the truncated name
+      const names = newName ? newName.split(' ').slice(0, 2).join(' ') : null;
+      setDisplayName(names);
       return true;
     }
     return false;
