@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -19,14 +19,14 @@ const SeasonsPage = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     const { data, error } = await supabase.from("seasons").select("*").order("number");
     if (error) toast({ title: t("error"), description: error.message, variant: "destructive" });
     else setData(data || []);
     setLoading(false);
-  };
+  }, [toast, t]);
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const openAdd = () => { setEditing(null); setForm({ number: "", start_date: "", end_date: "" }); setDialogOpen(true); };
   const openEdit = (s: Season) => { setEditing(s); setForm({ number: String(s.number), start_date: s.start_date || "", end_date: s.end_date || "" }); setDialogOpen(true); };
@@ -34,7 +34,7 @@ const SeasonsPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    const payload: any = { number: parseInt(form.number) };
+    const payload: { number: number; start_date?: string; end_date?: string } = { number: parseInt(form.number) };
     if (form.start_date) payload.start_date = form.start_date;
     if (form.end_date) payload.end_date = form.end_date;
     const { error } = editing

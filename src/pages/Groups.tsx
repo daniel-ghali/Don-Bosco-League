@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -19,14 +19,14 @@ const GroupsPage = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     const { data, error } = await supabase.from("groups").select("*").order("number");
     if (error) toast({ title: t("error"), description: error.message, variant: "destructive" });
     else setData(data || []);
     setLoading(false);
-  };
+  }, [toast, t]);
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const openAdd = () => { setEditing(null); setNumber(""); setDialogOpen(true); };
   const openEdit = (g: Group) => { setEditing(g); setNumber(String(g.number)); setDialogOpen(true); };

@@ -1,5 +1,5 @@
 
-CREATE TABLE public.profiles (
+CREATE TABLE IF NOT EXISTS public.profiles (
   id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email text NOT NULL,
   display_name text NOT NULL,
@@ -7,6 +7,11 @@ CREATE TABLE public.profiles (
 );
 
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+-- Drop existing policies if they exist
+DROP POLICY IF EXISTS "Users can read own profile" ON public.profiles;
+DROP POLICY IF EXISTS "Users can read all profiles" ON public.profiles;
+DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
 
 CREATE POLICY "Users can read own profile" ON public.profiles FOR SELECT TO authenticated USING (auth.uid() = id);
 CREATE POLICY "Users can read all profiles" ON public.profiles FOR SELECT TO authenticated USING (true);
@@ -29,6 +34,9 @@ BEGIN
   RETURN NEW;
 END;
 $$;
+
+-- Drop existing trigger if it exists
+DROP TRIGGER IF EXISTS on_auth_user_created_profile ON auth.users;
 
 CREATE TRIGGER on_auth_user_created_profile
   AFTER INSERT ON auth.users

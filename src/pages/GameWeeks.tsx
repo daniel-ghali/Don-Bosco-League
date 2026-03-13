@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -22,7 +22,7 @@ const GameWeeksPage = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     const [gwRes, sRes] = await Promise.all([
       supabase.from("gameweeks").select("*, seasons(number)").order("number"),
       supabase.from("seasons").select("*").order("number"),
@@ -31,9 +31,9 @@ const GameWeeksPage = () => {
     else setData(gwRes.data || []);
     setSeasons(sRes.data || []);
     setLoading(false);
-  };
+  }, [toast, t]);
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const openAdd = () => { setEditing(null); setForm({ number: "", start_date: "", end_date: "", season_id: "" }); setDialogOpen(true); };
   const openEdit = (g: GameWeek) => { setEditing(g); setForm({ number: String(g.number), start_date: g.start_date, end_date: g.end_date, season_id: g.season_id }); setDialogOpen(true); };

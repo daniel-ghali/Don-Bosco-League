@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -23,7 +23,7 @@ const TeamsPage = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     const [teamsRes, groupsRes] = await Promise.all([
       supabase.from("teams").select("*, groups(number)").order("name"),
       supabase.from("groups").select("*").order("number"),
@@ -32,9 +32,9 @@ const TeamsPage = () => {
     else setData(teamsRes.data || []);
     setGroups(groupsRes.data || []);
     setLoading(false);
-  };
+  }, [toast, t]);
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const openAdd = () => { setEditing(null); setName(""); setGroupId(""); setDialogOpen(true); };
   const openEdit = (tm: Team) => { setEditing(tm); setName(tm.name); setGroupId(tm.group_id); setDialogOpen(true); };

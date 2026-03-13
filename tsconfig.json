@@ -4,6 +4,7 @@
     "noImplicitAny": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
+    "typeRoots": ["node_modules/@types", "node_modules"],
     "paths": {
       "@/*": [
         "./src/*"
@@ -20,5 +21,6 @@
     {
       "path": "./tsconfig.node.json"
     }
-  ]
+  ],
+  "exclude": ["supabase/**"]
 }

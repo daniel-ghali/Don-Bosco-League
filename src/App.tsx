@@ -27,7 +27,7 @@ import MatchesPage from "./pages/Matches";
 import StatsPage from "./pages/Stats";
 import AnnouncementsPage from "./pages/Announcements";
 import ChipsPage from "./pages/Chips";
-import FantasyAdminPage from "./pages/FantasyAdmin";
+// import FantasyAdminPage from "./pages/FantasyAdmin";
 
 // Public pages
 import MainPage from "./pages/public/MainPage";
@@ -39,6 +39,7 @@ import PlayerDetailPage from "./pages/public/PlayerDetailPage";
 import ProfilePage from "./pages/public/ProfilePage";
 import FantasyPage from "./pages/public/FantasyPage";
 import LeaderboardPage from "./pages/public/LeaderboardPage";
+import LandingPage from "./pages/public/LandingPage";
 
 const queryClient = new QueryClient();
 
@@ -49,8 +50,19 @@ const RoleRedirect = () => {
   return <Navigate to="/main" replace />;
 };
 
-const AppRoutes = () => {  
+const AppRoutes = () => {
   const { session, loading } = useAuth();
+
+  // Show landing page for unauthenticated users at root
+  if (!session && !loading) {
+    return (
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="*" element={<LandingPage />} />
+      </Routes>
+    );
+  }
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>;
   if (!session) return <Auth />;
@@ -76,7 +88,7 @@ const AppRoutes = () => {
               <Route path="stats" element={<StatsPage />} />
               <Route path="announcements" element={<AnnouncementsPage />} />
               <Route path="chips" element={<ChipsPage />} />
-              <Route path="fantasy" element={<FantasyAdminPage />} />
+              {/* <Route path="fantasy" element={<FantasyAdminPage />} /> */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AppLayout>

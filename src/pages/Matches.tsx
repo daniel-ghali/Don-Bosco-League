@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -28,9 +28,9 @@ const MatchesPage = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     const [mRes, tRes, gwRes, pRes] = await Promise.all([
-      supabase.from("matches").select("*, gameweeks(number, seasons(number)), team1:teams!matches_team1_id_fkey(name), team2:teams!matches_team2_id_fkey(name), motm_player:players!matches_motm_player_id_fkey(name, last_name)").order("date", { ascending: false }),
+      supabase.from("matches").select("*, gameweeks(number, seasons(number)), team1:teams!matches_team1_id_fkey(name), team2:teams!matches_team2_id_fkey(name), motm_player:players!matches_motm_player_id_fkey(name, last_name)"),
       supabase.from("teams").select("*").order("name"),
       supabase.from("gameweeks").select("*, seasons(number)").order("number"),
       supabase.from("players").select("id, name, last_name").order("last_name"),
@@ -41,9 +41,9 @@ const MatchesPage = () => {
     setGameweeks(gwRes.data || []);
     setPlayers(pRes.data || []);
     setLoading(false);
-  };
+  }, [toast, t]);
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const openAdd = () => { setEditing(null); setForm({ date: "", gameweek_id: "", team1_id: "", team2_id: "", season_id: "", motm_player_id: "", is_played: false }); setDialogOpen(true); };
   const openEdit = (m: Match) => { setEditing(m); setForm({ date: m.date, gameweek_id: m.gameweek_id, team1_id: m.team1_id, team2_id: m.team2_id, season_id: m.season_id || "", motm_player_id: m.motm_player_id || "", is_played: m.is_played || false }); setDialogOpen(true); };
@@ -51,7 +51,7 @@ const MatchesPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    const payload: any = { date: form.date, gameweek_id: form.gameweek_id, team1_id: form.team1_id, team2_id: form.team2_id, is_played: form.is_played };
+    const payload: { date: string; gameweek_id: string; team1_id: string; team2_id: string; is_played: boolean; season_id?: string | null; motm_player_id?: string | null } = { date: form.date, gameweek_id: form.gameweek_id, team1_id: form.team1_id, team2_id: form.team2_id, is_played: form.is_played };
     if (form.season_id) payload.season_id = form.season_id;
     if (form.motm_player_id) payload.motm_player_id = form.motm_player_id;
     else payload.motm_player_id = null;
@@ -73,10 +73,10 @@ const MatchesPage = () => {
   const columns: Column<Match>[] = [
     { key: "date", label: t("date") },
     { key: "gameweek_id", label: t("gameWeek"), render: (m) => `${t("gameWeek").substring(0,2)}${m.gameweeks?.number ?? "?"} (${t("season").substring(0,1)}${m.gameweeks?.seasons?.number ?? "?"})` },
-    { key: "team1_id", label: t("team1"), render: (m) => (m as any).team1?.name ?? "?" },
-    { key: "team2_id", label: t("team2"), render: (m) => (m as any).team2?.name ?? "?" },
+    { key: "team1_id", label: t("team1"), render: (m) => m.team1?.name ?? "?" },
+    { key: "team2_id", label: t("team2"), render: (m) => m.team2?.name ?? "?" },
     { key: "is_played", label: t("status"), render: (m) => m.is_played ? <Badge className="bg-success/15 text-success">{t("played")}</Badge> : <Badge variant="outline">{t("upcoming")}</Badge> },
-    { key: "motm_player_id", label: t("motm"), render: (m) => (m as any).motm_player ? `${(m as any).motm_player.name} ${(m as any).motm_player.last_name}` : "—" },
+    { key: "motm_player_id", label: t("motm"), render: (m) => m.motm_player ? `${m.motm_player.name} ${m.motm_player.last_name}` : "—" },
   ];
 
   return (

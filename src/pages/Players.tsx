@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -25,7 +25,7 @@ const PlayersPage = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     const [playersRes, teamsRes] = await Promise.all([
       supabase.from("players").select("*, teams(name)").order("last_name"),
       supabase.from("teams").select("*").order("name"),
@@ -34,9 +34,9 @@ const PlayersPage = () => {
     else setData(playersRes.data || []);
     setTeams(teamsRes.data || []);
     setLoading(false);
-  };
+  }, [toast, t]);
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const openAdd = () => { setEditing(null); setForm({ name: "", last_name: "", position: "", price: "", team_id: "", photo: "" }); setDialogOpen(true); };
   const openEdit = (p: Player) => { setEditing(p); setForm({ name: p.name, last_name: p.last_name, position: p.position, price: String(p.price), team_id: p.team_id, photo: p.photo || "" }); setDialogOpen(true); };

@@ -1,9 +1,13 @@
 
--- Create role enum
-CREATE TYPE public.app_role AS ENUM ('admin', 'student');
+-- Create role enum (only if it doesn't exist)
+DO $$ BEGIN
+    CREATE TYPE public.app_role AS ENUM ('admin', 'student');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
--- Create user_roles table
-CREATE TABLE public.user_roles (
+-- Create user_roles table (only if it doesn't exist)
+CREATE TABLE IF NOT EXISTS public.user_roles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
   role app_role NOT NULL,
@@ -28,6 +32,8 @@ AS $$
 $$;
 
 -- RLS: users can read their own roles
+DROP POLICY IF EXISTS "Users can read own roles" ON public.user_roles;
+CREATE POLICY "Users can read own roles" ON public.user_roles FOR SELECT TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users can read own roles"
   ON public.user_roles FOR SELECT
   TO authenticated

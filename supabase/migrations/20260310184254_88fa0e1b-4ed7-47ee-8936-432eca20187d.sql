@@ -98,6 +98,9 @@ CREATE POLICY "Users can manage own team players" ON public.fantasy_team_players
 CREATE POLICY "Admins can manage all team players" ON public.fantasy_team_players FOR ALL TO authenticated USING (public.has_role(auth.uid(), 'admin')) WITH CHECK (public.has_role(auth.uid(), 'admin'));
 
 -- =============================================
+-- ADD PHOTO COLUMN TO PLAYERS TABLE
+-- =============================================
+ALTER TABLE public.players ADD COLUMN photo TEXT;
 -- FANTASY PLAYER MATCH POINTS
 -- =============================================
 CREATE TABLE IF NOT EXISTS public.fantasy_player_match_points (

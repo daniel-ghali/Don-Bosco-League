@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -6,7 +6,7 @@ export const useProfile = () => {
   const { session } = useAuth();
   const [displayName, setDisplayName] = useState<string | null>(null);
 
-  const fetchDisplayName = async () => {
+  const fetchDisplayName = useCallback(async () => {
     if (!session?.user?.id) return;
     const { data } = await supabase
       .from("profiles")
@@ -16,7 +16,7 @@ export const useProfile = () => {
     const fullName = data?.display_name ?? null;
     const names = fullName ? fullName.split(' ').slice(0, 2).join(' ') : null;
     setDisplayName(names);
-  };
+  }, [session?.user?.id]);
 
   const updateDisplayName = async (newName: string) => {
     if (!session?.user?.id) return false;
@@ -36,7 +36,7 @@ export const useProfile = () => {
 
   useEffect(() => {
     fetchDisplayName();
-  }, [session?.user?.id]);
+  }, [fetchDisplayName]);
 
   return { displayName, updateDisplayName };
 };

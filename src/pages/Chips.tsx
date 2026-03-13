@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -20,14 +20,14 @@ const ChipsPage = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     const { data, error } = await supabase.from("chips").select("*").order("name");
     if (error) toast({ title: t("error"), description: error.message, variant: "destructive" });
     else setData(data || []);
     setLoading(false);
-  };
+  }, [toast, t]);
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const openAdd = () => { setEditing(null); setForm({ name: "", description: "" }); setDialogOpen(true); };
   const openEdit = (c: Chip) => { setEditing(c); setForm({ name: c.name, description: c.description || "" }); setDialogOpen(true); };

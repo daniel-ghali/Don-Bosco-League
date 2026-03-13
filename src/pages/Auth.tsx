@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,8 @@ const passwordRules = [
 const progressBars = Array.from({ length: 20 }, (_, i) => i < 16);
 
 const Auth = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [email, setEmail] = useState("");
@@ -27,6 +30,8 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
   const { toast } = useToast();
+
+  const redirectTo = searchParams.get('redirect') || '/main';
 
   const passwordValid = useMemo(() => passwordRules.every((r) => r.test(password)), [password]);
 
@@ -51,9 +56,12 @@ const Auth = () => {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        // Redirect to the intended page after successful login
+        navigate(redirectTo);
       }
-    } catch (error: any) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } catch (error) {
+      const err = error as Error;
+      toast({ title: "Error", description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
