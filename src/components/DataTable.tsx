@@ -60,7 +60,7 @@ const DataTable = <T extends { id: string }>({ title, columns, data, onAdd, onEd
                         variant="ghost"
                         size="icon"
                         onClick={() => onEdit(item)}
-                        className="h-8 w-8 hover:bg-muted/40"
+                        className="hover:bg-muted/40"
                       >
                         <Pencil className="w-3.5 h-3.5" />
                       </Button>
@@ -68,7 +68,7 @@ const DataTable = <T extends { id: string }>({ title, columns, data, onAdd, onEd
                         variant="ghost"
                         size="icon"
                         onClick={() => onDelete(item)}
-                        className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                        className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </Button>
