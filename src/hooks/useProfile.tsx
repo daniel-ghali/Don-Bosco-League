@@ -24,13 +24,14 @@ export const useProfile = () => {
       .from("profiles")
       .update({ display_name: newName })
       .eq("id", session.user.id);
-    if (!error) {
-      // Directly update the state with the truncated name
-      const names = newName ? newName.split(' ').slice(0, 2).join(' ') : null;
-      setDisplayName(names);
-      return true;
+    if (error) {
+      console.error("Error updating display name:", error);
+      return false;
     }
-    return false;
+    // Directly update the state with the truncated name
+    const names = newName ? newName.split(' ').slice(0, 2).join(' ') : null;
+    setDisplayName(names);
+    return true;
   };
 
   useEffect(() => {

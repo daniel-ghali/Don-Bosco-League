@@ -10,6 +10,7 @@ ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can read own profile" ON public.profiles FOR SELECT TO authenticated USING (auth.uid() = id);
 CREATE POLICY "Users can read all profiles" ON public.profiles FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE TO authenticated USING (auth.uid() = id);
 
 CREATE OR REPLACE FUNCTION public.handle_new_user_profile()
 RETURNS trigger
