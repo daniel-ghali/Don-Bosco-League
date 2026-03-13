@@ -26,7 +26,10 @@ const DataTable = <T extends { id: string }>({ title, columns, data, onAdd, onEd
     <div className="animate-fade-in">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold">{title}</h2>
-        <Button onClick={onAdd} size="sm"><Plus className="w-4 h-4 ltr:mr-1 rtl:ml-1" />{t("add")}</Button>
+        <Button onClick={onAdd} size="sm" variant="secondary">
+          <Plus className="w-4 h-4 ltr:mr-1 rtl:ml-1" />
+          {t("add")}
+        </Button>
       </div>
       <div className="border rounded-lg overflow-hidden bg-card">
         <Table>
@@ -53,10 +56,20 @@ const DataTable = <T extends { id: string }>({ title, columns, data, onAdd, onEd
                   ))}
                   <TableCell className="text-left">
                     <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" onClick={() => onEdit(item)} className="h-8 w-8">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onEdit(item)}
+                        className="h-8 w-8 hover:bg-muted/40"
+                      >
                         <Pencil className="w-3.5 h-3.5" />
                       </Button>
-                      <Button variant="ghost" size="icon" onClick={() => onDelete(item)} className="h-8 w-8 text-destructive hover:text-destructive">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onDelete(item)}
+                        className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                      >
                         <Trash2 className="w-3.5 h-3.5" />
                       </Button>
                     </div>
