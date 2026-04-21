@@ -32,6 +32,7 @@ const PublicPlayersPage = () => {
               <th className="text-left px-4 py-3 font-medium">Position</th>
               <th className="text-left px-4 py-3 font-medium">Team</th>
               <th className="text-center px-3 py-3 font-medium">Value</th>
+              <th className="text-center px-3 py-3 font-medium">View details</th>
               <th className="w-10"></th>
             </tr>
           </thead>
@@ -53,7 +54,7 @@ const PublicPlayersPage = () => {
                   </td>
                   <td className="px-4 py-3 text-[#888]">{p.teams?.name}</td>
                   <td className="text-center px-3 py-3 text-[#00c853] font-medium">${Number(p.price).toFixed(1)}M</td>
-                  <td className="px-3">
+                  <td className="text-right px-3 py-3 text-[#00c853] font-medium ">
                     <Link to={`/players/${p.id}`}><ChevronRight className="w-4 h-4 text-[#888]" /></Link>
                   </td>
                 </tr>

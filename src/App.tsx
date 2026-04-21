@@ -39,7 +39,7 @@ import PlayerDetailPage from "./pages/public/PlayerDetailPage";
 import ProfilePage from "./pages/public/ProfilePage";
 import FantasyPage from "./pages/public/FantasyPage";
 import LeaderboardPage from "./pages/public/LeaderboardPage";
-import LandingPage from "./pages/public/LandingPage";
+
 
 const queryClient = new QueryClient();
 
@@ -53,16 +53,6 @@ const RoleRedirect = () => {
 const AppRoutes = () => {
   const { session, loading } = useAuth();
 
-  // Show landing page for unauthenticated users at root
-  if (!session && !loading) {
-    return (
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/auth" element={<Auth />} />
-        <Route path="*" element={<LandingPage />} />
-      </Routes>
-    );
-  }
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>;
   if (!session) return <Auth />;

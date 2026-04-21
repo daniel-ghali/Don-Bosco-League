@@ -199,7 +199,7 @@ const Auth = () => {
         </div>
       )}
 
-      {/* Landing Content */}
+
       <div className="relative z-10 min-h-screen flex flex-col">
         {/* Top bar */}
         <div className="px-6 py-4">
